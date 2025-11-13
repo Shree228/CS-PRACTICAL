@@ -1,0 +1,189 @@
+Lab Manual
+Experiment No: 4
+Title:
+Implement a real-time event processing system using a Queue data structure.
+Problem Statement:
+Design and implement a real-time event processing system using a Queue that provides the following functionalities:
+
+1. Add an Event: When a new event occurs, it should be added to the event queue.
+2. Process the Next Event: The system should process and remove the event that has been in the queue the longest (FIFO order).
+3. Display Pending Events: Show all the events currently waiting to be processed.
+4. Cancel an Event: An event can be canceled if it has not yet been processed.
+Objective:
+To implement a real-time event processing system using a Queue data structure in C. The system should support event addition, processing, display of pending events, and cancellation of events.
+Theory:
+A Queue is a linear data structure that follows the FIFO (First In, First Out) principle. This means that the first element inserted into the queue will be the first one to be removed, similar to a line of people waiting for service.
+
+Basic Operations of Queue:
+1. Enqueue (Insertion): Add an element to the rear of the queue.
+2. Dequeue (Deletion): Remove an element from the front of the queue.
+3. Peek/Front: Retrieve the element at the front of the queue without removing it.
+4. isEmpty: Check whether the queue is empty.
+5. isFull: Check whether the queue is full (in case of an array implementation).
+
+Applications of Queue:
+- Job scheduling in operating systems.
+- Handling requests in servers.
+- Real-time event handling.
+- Printer queue management.
+- Breadth-First Search (BFS) in graphs.
+
+In this experiment, the queue is used to manage real-time events where:
+- New events are added to the queue.
+- The oldest event is processed first.
+- Events can be canceled if still pending.
+- Pending events can be displayed for review.
+Algorithm:
+1. Start
+2. Initialize an empty queue.
+3. Provide a menu with the following options:
+   - Add an Event
+   - Process Next Event
+   - Display Pending Events
+   - Cancel an Event
+   - Exit
+4. If the user selects Add an Event, enqueue the event into the queue.
+5. If the user selects Process Next Event, dequeue the front element and display it as processed.
+6. If the user selects Display Pending Events, traverse and print all elements of the queue.
+7. If the user selects Cancel an Event, search for the event in the queue, and remove it if present.
+8. Repeat until the user chooses Exit.
+9. Stop
+C Program:
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 50
+
+typedef struct {
+    char name[50];
+} Event;
+
+typedef struct {
+    Event events[MAX];
+    int front, rear;
+} Queue;
+
+void initQueue(Queue *q) {
+    q->front = -1;
+    q->rear = -1;
+}
+
+int isEmpty(Queue *q) {
+    return (q->front == -1);
+}
+
+int isFull(Queue *q) {
+    return (q->rear == MAX - 1);
+}
+
+void addEvent(Queue *q, char *name) {
+    if (isFull(q)) {
+        printf("Queue is full! Cannot add more events.\n");
+        return;
+    }
+    if (q->front == -1) q->front = 0;
+    q->rear++;
+    strcpy(q->events[q->rear].name, name);
+    printf("Event '%s' added successfully.\n", name);
+}
+
+void processEvent(Queue *q) {
+    if (isEmpty(q)) {
+        printf("No events to process.\n");
+        return;
+    }
+    printf("Processing Event: %s\n", q->events[q->front].name);
+    if (q->front == q->rear) {
+        q->front = q->rear = -1;
+    } else {
+        q->front++;
+    }
+}
+
+void displayEvents(Queue *q) {
+    if (isEmpty(q)) {
+        printf("No pending events.\n");
+        return;
+    }
+    printf("Pending Events:\n");
+    for (int i = q->front; i <= q->rear; i++) {
+        printf("%d. %s\n", i - q->front + 1, q->events[i].name);
+    }
+}
+
+void cancelEvent(Queue *q, char *name) {
+    if (isEmpty(q)) {
+        printf("No events to cancel.\n");
+        return;
+    }
+    int i, found = 0;
+    for (i = q->front; i <= q->rear; i++) {
+        if (strcmp(q->events[i].name, name) == 0) {
+            found = 1;
+            break;
+        }
+    }
+    if (!found) {
+        printf("Event '%s' not found in queue.\n", name);
+        return;
+    }
+    for (int j = i; j < q->rear; j++) {
+        q->events[j] = q->events[j + 1];
+    }
+    q->rear--;
+    if (q->rear < q->front) {
+        q->front = q->rear = -1;
+    }
+    printf("Event '%s' cancelled successfully.\n", name);
+}
+
+int main() {
+    Queue q;
+    initQueue(&q);
+    int choice;
+    char name[50];
+
+    while (1) {
+        printf("\n--- Event Processing System ---\n");
+        printf("1. Add an Event\n");
+        printf("2. Process Next Event\n");
+        printf("3. Display Pending Events\n");
+        printf("4. Cancel an Event\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar();
+
+        switch (choice) {
+            case 1:
+                printf("Enter event name: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0';
+                addEvent(&q, name);
+                break;
+            case 2:
+                processEvent(&q);
+                break;
+            case 3:
+                displayEvents(&q);
+                break;
+            case 4:
+                printf("Enter event name to cancel: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0';
+                cancelEvent(&q, name);
+                break;
+            case 5:
+                printf("Exiting system...\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+    return 0;
+}
+
+Conclusion:
+The experiment successfully demonstrates the working of a Queue data structure in implementing a real-time event processing system. Events are handled in FIFO order, ensuring fairness and order in processing. The system also supports cancellation of events and displaying pending events, making it suitable for real-world applications like operating systems, networking, and scheduling tasks.
