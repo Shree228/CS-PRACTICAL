@@ -1,0 +1,162 @@
+Lab Manual
+Graph Traversal using BFS and DFS with User Input
+Problem Statement:
+Consider a particular area in your city. Note the popular locations A, B, C, ... in that area. Assume these locations represent nodes of a graph. If there is a route between two locations, it is represented as a connection (edge) between nodes.
+
+Find out the sequence in which you will visit these locations, starting from (say A) using:
+1. Breadth First Search (BFS)
+2. Depth First Search (DFS)
+Represent the graph using:
+- An adjacency matrix to perform DFS
+- An adjacency list to perform BFS
+Theory:
+A graph is a data structure consisting of a set of nodes (vertices) and edges that connect pairs of nodes. It is commonly used to represent networks, such as maps, social connections, communication routes, and more.
+
+•	Types of Graph Representation:
+•	Adjacency Matrix:
+- A 2D array where matrix[i][j] = 1 if there is an edge between node i and node j.
+- Space complexity: O(n²)
+- Suitable for dense graphs
+•	Adjacency List:
+- An array of linked lists where each element at index i contains a list of all adjacent nodes.
+- Space efficient for sparse graphs (Space complexity: O(V + E))
+•	Graph Traversal Techniques:
+•	1. Depth First Search (DFS):
+- DFS explores a graph deeply, visiting one child node until it reaches the end before backtracking.
+- It uses recursion or a stack.
+- Efficient for solving problems like maze traversal, topological sorting, etc.
+- In this program, DFS is implemented using an adjacency matrix.
+•	2. Breadth First Search (BFS):
+- BFS explores a graph level by level, visiting all neighbors of a node before moving to the next level.
+- It uses a queue data structure.
+- Useful for shortest path problems (like GPS navigation), broadcasting, etc.
+- In this program, BFS is implemented using an adjacency list.
+Software & Hardware Requirements:
+Component	Specification
+Programming Language	C
+Compiler	GCC / Turbo C
+Operating System	Windows / Linux
+Minimum RAM	512 MB
+C Program: Graph Traversal using User Input
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int adj_matrix[MAX][MAX];
+int visited_dfs[MAX];
+
+void DFS(int v, int n) {
+    visited_dfs[v] = 1;
+    printf("%c ", v + 'A');
+    for (int i = 0; i < n; i++) {
+        if (adj_matrix[v][i] && !visited_dfs[i]) {
+            DFS(i, n);
+        }
+    }
+}
+
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+struct Graph {
+    struct Node* adjList[MAX];
+    int visited[MAX];
+};
+
+struct Node* createNode(int v) {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct Graph* createGraph(int n) {
+    struct Graph* graph = malloc(sizeof(struct Graph));
+    for (int i = 0; i < n; i++) {
+        graph->adjList[i] = NULL;
+        graph->visited[i] = 0;
+    }
+    return graph;
+}
+
+void addEdge(struct Graph* graph, int src, int dest) {
+    struct Node* newNode = createNode(dest);
+    newNode->next = graph->adjList[src];
+    graph->adjList[src] = newNode;
+
+    newNode = createNode(src);
+    newNode->next = graph->adjList[dest];
+    graph->adjList[dest] = newNode;
+}
+
+void BFS(struct Graph* graph, int startVertex, int n) {
+    int queue[MAX], front = 0, rear = -1;
+    graph->visited[startVertex] = 1;
+    queue[++rear] = startVertex;
+
+    while (front <= rear) {
+        int currentVertex = queue[front++];
+        printf("%c ", currentVertex + 'A');
+
+        struct Node* temp = graph->adjList[currentVertex];
+        while (temp) {
+            int adjVertex = temp->vertex;
+            if (graph->visited[adjVertex] == 0) {
+                graph->visited[adjVertex] = 1;
+                queue[++rear] = adjVertex;
+            }
+            temp = temp->next;
+        }
+    }
+}
+
+int main() {
+    int n, e;
+    int u, v;
+    
+    printf("Enter number of locations (nodes): ");
+    scanf("%d", &n);
+
+    printf("Enter number of direct connections (edges): ");
+    scanf("%d", &e);
+
+    struct Graph* graph = createGraph(n);
+
+    printf("Enter each connection as two characters (e.g., A B):\n");
+    for (int i = 0; i < e; i++) {
+        char ch1, ch2;
+        scanf(" %c %c", &ch1, &ch2);
+        u = ch1 - 'A';
+        v = ch2 - 'A';
+
+        adj_matrix[u][v] = 1;
+        adj_matrix[v][u] = 1;
+
+        addEdge(graph, u, v);
+    }
+
+    char start;
+    printf("Enter starting location (e.g., A): ");
+    scanf(" %c", &start);
+    int startIndex = start - 'A';
+
+    printf("\nDFS Traversal (Adjacency Matrix): ");
+    DFS(startIndex, n);
+
+    printf("\nBFS Traversal (Adjacency List): ");
+    BFS(graph, startIndex, n);
+
+    return 0;
+}
+
+Conclusion:
+This practical demonstrates how to model real-world locations as a graph and apply traversal techniques like DFS and BFS. It reinforces the understanding of:
+- Graph representations (adjacency matrix and list)
+- Real-time applications of BFS and DFS
+- User-interactive program design using basic data structures
+
+This experiment lays the foundation for more advanced graph-based algorithms such as shortest path, spanning tree, and network flow problems.
