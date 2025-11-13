@@ -1,0 +1,182 @@
+Lab Manual: Hash Table Using Linear Probing in C
+Practical Title
+Design and implement a hash table of fixed size using the division method for the hash function and resolve collisions using linear probing. Allow the user to perform the following operations:
+- Insert a key
+- Search for a key
+- Delete a key
+- Display the table
+Objective
+To implement a hash table of fixed size using:
+- Division method (`key % table_size`) as the hash function
+- Linear probing for handling collisions
+- A user interface to perform insert, search, delete, and display operations on the hash table
+Theory
+Hash Table
+A hash table is a data structure that stores keys or key-value pairs and allows fast access using a hash function to compute the index.
+Hash Function (Division Method)
+The division method is used to calculate the index as:
+index = key % table_size
+This ensures that the index is always within the bounds of the table.
+Linear Probing
+Linear probing is a collision resolution technique in open addressing. When a collision occurs (i.e., the calculated index is already occupied), the algorithm checks the next available index in a linear sequence:
+index = (index + 1) % table_size
+This continues until an empty or deleted slot is found.
+Deletion in Linear Probing
+When a key is deleted, it is replaced with a special marker value (e.g., -1) to indicate that the slot was previously used. This allows search operations to continue probing correctly.
+Software & Hardware Requirements
+Software	Version
+GCC Compiler	Any
+OS	Windows/Linux
+Text Editor	Code::Blocks / Dev-C++ / VS Code
+
+Hardware	Specification
+Processor	1 GHz or faster
+RAM	512 MB or more
+Algorithm
+1. Insert(key):
+   - Compute index using key % table_size
+   - If the slot is occupied, linearly probe to find the next available slot
+
+2. Search(key):
+   - Compute index using key % table_size
+   - Linearly probe until the key is found or an empty slot is reached
+
+3. Delete(key):
+   - Locate the key using linear probing
+   - Mark the slot as deleted (using a sentinel value like -1)
+
+4. Display():
+   - Print all values in the table with their indices
+C Program: Hash Table with Linear Probing (User Input)
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+#define EMPTY -9999
+#define DELETED -1
+
+int hashTable[TABLE_SIZE];
+
+void initialize() {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        hashTable[i] = EMPTY;
+    }
+}
+
+int hashFunction(int key) {
+    return key % TABLE_SIZE;
+}
+
+void insert(int key) {
+    int index = hashFunction(key);
+    int originalIndex = index;
+
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (hashTable[index] == EMPTY || hashTable[index] == DELETED) {
+            hashTable[index] = key;
+            printf("Inserted key %d at index %d\n", key, index);
+            return;
+        }
+        index = (index + 1) % TABLE_SIZE;
+        if (index == originalIndex) {
+            printf("Hash table is full! Cannot insert.\n");
+            return;
+        }
+    }
+}
+
+void search(int key) {
+    int index = hashFunction(key);
+    int originalIndex = index;
+
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (hashTable[index] == key) {
+            printf("Key %d found at index %d\n", key, index);
+            return;
+        } else if (hashTable[index] == EMPTY) {
+            break;
+        }
+        index = (index + 1) % TABLE_SIZE;
+        if (index == originalIndex) break;
+    }
+
+    printf("Key %d not found in the table.\n", key);
+}
+
+void delete(int key) {
+    int index = hashFunction(key);
+    int originalIndex = index;
+
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (hashTable[index] == key) {
+            hashTable[index] = DELETED;
+            printf("Key %d deleted from index %d\n", key, index);
+            return;
+        } else if (hashTable[index] == EMPTY) {
+            break;
+        }
+        index = (index + 1) % TABLE_SIZE;
+        if (index == originalIndex) break;
+    }
+
+    printf("Key %d not found for deletion.\n", key);
+}
+
+void display() {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (hashTable[i] == EMPTY)
+            printf("[%d]: EMPTY\n", i);
+        else if (hashTable[i] == DELETED)
+            printf("[%d]: DELETED\n", i);
+        else
+            printf("[%d]: %d\n", i, hashTable[i]);
+    }
+}
+
+int main() {
+    int choice, key;
+    initialize();
+
+    while (1) {
+        printf("\n--- Hash Table Operations ---\n");
+        printf("1. Insert\n");
+        printf("2. Search\n");
+        printf("3. Delete\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter key to insert: ");
+                scanf("%d", &key);
+                insert(key);
+                break;
+            case 2:
+                printf("Enter key to search: ");
+                scanf("%d", &key);
+                search(key);
+                break;
+            case 3:
+                printf("Enter key to delete: ");
+                scanf("%d", &key);
+                delete(key);
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
+
+Conclusion
+The implemented program demonstrates how to manage a hash table using linear probing. The division method provides a simple hash function, while linear probing efficiently resolves collisions. Deletion is managed using sentinel values, maintaining the integrity of search operations.
