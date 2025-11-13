@@ -1,0 +1,213 @@
+Lab Manual
+Title: Student Record Management System using Linked List
+Problem Statement:
+Create a Student Record Management System using linked list:
+• Use a singly/doubly linked list to store student data (Roll No, Name, Marks).
+• Perform operations: Add, Delete, Update, Search, and Sort.
+• Display records in ascending/descending order based on marks or roll number.
+Software and Hardware Requirements:
+•	Software Requirements:
+•	• Operating System: Windows/Linux
+•	• Compiler: GCC / Turbo C / Code::Blocks / Dev C++
+•	• Editor: VS Code / Notepad++ / Sublime Text
+•	Hardware Requirements:
+•	• Processor: Intel Pentium or later
+•	• RAM: Minimum 2 GB
+•	• Hard Disk: Minimum 512 MB free space
+Theory:
+A Linked List is a linear data structure where elements are stored in nodes and each node points to the next node. In this program, a singly linked list is used to store student records containing Roll Number, Name, and Marks.
+• Singly Linked List: A data structure consisting of nodes, where each node contains data and a pointer to the next node.
+• Node: A structure representing one student record.
+• Add Operation: Inserts a new student at the beginning of the list.
+• Delete Operation: Removes a student node based on the roll number.
+• Update Operation: Modifies an existing student's data.
+• Search Operation: Finds a student based on roll number.
+• Sort Operation: Orders the list by roll number or marks, in ascending or descending order.
+• Display: Traverses the list and prints student records.
+C Program Code:
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Student {
+    int roll;
+    char name[100];
+    float marks;
+    struct Student* next;
+};
+
+struct Student* head = NULL;
+
+void addStudent(int roll, char name[], float marks) {
+    struct Student* newNode = (struct Student*)malloc(sizeof(struct Student));
+    newNode->roll = roll;
+    strcpy(newNode->name, name);
+    newNode->marks = marks;
+    newNode->next = head;
+    head = newNode;
+    printf("Student added successfully!\n");
+}
+
+void deleteStudent(int roll) {
+    struct Student *temp = head, *prev = NULL;
+    while (temp != NULL && temp->roll != roll) {
+        prev = temp;
+        temp = temp->next;
+    }
+    if (temp == NULL) {
+        printf("Student with roll %d not found!\n", roll);
+        return;
+    }
+    if (prev == NULL) head = temp->next;
+    else prev->next = temp->next;
+    free(temp);
+    printf("Student deleted successfully!\n");
+}
+
+void updateStudent(int roll) {
+    struct Student* temp = head;
+    while (temp != NULL) {
+        if (temp->roll == roll) {
+            printf("Enter new name: ");
+            scanf("%s", temp->name);
+            printf("Enter new marks: ");
+            scanf("%f", &temp->marks);
+            printf("Student updated successfully!\n");
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Student with roll %d not found!\n", roll);
+}
+
+void searchStudent(int roll) {
+    struct Student* temp = head;
+    while (temp != NULL) {
+        if (temp->roll == roll) {
+            printf("Roll: %d, Name: %s, Marks: %.2f\n", temp->roll, temp->name, temp->marks);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Student with roll %d not found!\n", roll);
+}
+
+void sortByMarks(int ascending) {
+    struct Student *i, *j;
+    for (i = head; i != NULL; i = i->next) {
+        for (j = i->next; j != NULL; j = j->next) {
+            int cond = ascending ? (i->marks > j->marks) : (i->marks < j->marks);
+            if (cond) {
+                float tempMarks = i->marks;
+                i->marks = j->marks;
+                j->marks = tempMarks;
+                int tempRoll = i->roll;
+                i->roll = j->roll;
+                j->roll = tempRoll;
+                char tempName[100];
+                strcpy(tempName, i->name);
+                strcpy(i->name, j->name);
+                strcpy(j->name, tempName);
+            }
+        }
+    }
+    printf("Records sorted by marks.\n");
+}
+
+void sortByRoll(int ascending) {
+    struct Student *i, *j;
+    for (i = head; i != NULL; i = i->next) {
+        for (j = i->next; j != NULL; j = j->next) {
+            int cond = ascending ? (i->roll > j->roll) : (i->roll < j->roll);
+            if (cond) {
+                float tempMarks = i->marks;
+                i->marks = j->marks;
+                j->marks = tempMarks;
+                int tempRoll = i->roll;
+                i->roll = j->roll;
+                j->roll = tempRoll;
+                char tempName[100];
+                strcpy(tempName, i->name);
+                strcpy(i->name, j->name);
+                strcpy(j->name, tempName);
+            }
+        }
+    }
+    printf("Records sorted by roll number.\n");
+}
+
+void displayStudents() {
+    struct Student* temp = head;
+    if (temp == NULL) {
+        printf("No student records found!\n");
+        return;
+    }
+    printf("Student Records:\n");
+    printf("Roll\tName\tMarks\n");
+    while (temp != NULL) {
+        printf("%d\t%s\t%.2f\n", temp->roll, temp->name, temp->marks);
+        temp = temp->next;
+    }
+}
+
+int main() {
+    int choice, roll, order;
+    char name[100];
+    float marks;
+    do {
+        printf("\n--- Student Record Management ---\n");
+        printf("1. Add Student\n2. Delete Student\n3. Update Student\n4. Search Student\n");
+        printf("5. Sort by Marks\n6. Sort by Roll\n7. Display Students\n0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Enter Roll No: ");
+                scanf("%d", &roll);
+                printf("Enter Name: ");
+                scanf("%s", name);
+                printf("Enter Marks: ");
+                scanf("%f", &marks);
+                addStudent(roll, name, marks);
+                break;
+            case 2:
+                printf("Enter Roll No to delete: ");
+                scanf("%d", &roll);
+                deleteStudent(roll);
+                break;
+            case 3:
+                printf("Enter Roll No to update: ");
+                scanf("%d", &roll);
+                updateStudent(roll);
+                break;
+            case 4:
+                printf("Enter Roll No to search: ");
+                scanf("%d", &roll);
+                searchStudent(roll);
+                break;
+            case 5:
+                printf("Enter 1 for ascending, 0 for descending: ");
+                scanf("%d", &order);
+                sortByMarks(order);
+                break;
+            case 6:
+                printf("Enter 1 for ascending, 0 for descending: ");
+                scanf("%d", &order);
+                sortByRoll(order);
+                break;
+            case 7:
+                displayStudents();
+                break;
+            case 0:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    } while (choice != 0);
+    return 0;
+}
+
+Conclusion:
+This lab demonstrates how to create a Student Record Management System using singly linked list in C. It provides hands-on experience with data structure operations such as insertion, deletion, updating, searching, sorting, and displaying records efficiently.
