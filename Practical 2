@@ -1,0 +1,111 @@
+Experiment No.: 2 
+Problem Statement: 
+In a company, employee salaries are stored in a list as floating-point numbers. Write a 
+Python program that sorts the employee salaries in ascending order using the following two 
+algorithms: - Selection Sort: Sort the salaries using the selection sort algorithm. - Bubble Sort: Sort the salaries using the bubble sort algorithm. 
+After sorting the salaries, the program should display the top five highest salaries in the 
+company. 
+Objective: 
+To understand and implement the working of Selection Sort and Bubble Sort in C to sort a 
+list of employee salaries (floating-point values) and retrieve the top five highest salaries. 
+Theory: 
+Selection Sort: 
+Selection Sort is a simple sorting algorithm that selects the smallest (or largest) element 
+from an unsorted array and swaps it with the leftmost unsorted element. It continues until 
+the entire array is sorted. - Time Complexity: O(n²) - Space Complexity: O(1) - Stable: No 
+Bubble Sort: 
+Bubble Sort repeatedly steps through the list, compares adjacent pairs, and swaps them if 
+they are in the wrong order. It gets its name because smaller values "bubble" to the top of 
+the list. - Time Complexity: O(n²) - Space Complexity: O(1) 
+Software Requirements: - OS: Windows / Linux - IDE: Code:Blocks / Turbo C / VS Code - Compiler: GCC 
+Hardware Requirements: - CPU: Intel Pentium or above - RAM: 512 MB or more - Disk: 100 MB free space 
+ 
+ 
+C Program : 
+#include <stdio.h> 
+  
+void selectionSort(float arr[], int n) { 
+    int i, j, minIndex; 
+    float temp; 
+    for (i = 0; i < n - 1; i++) { 
+        minIndex = i; 
+        for (j = i + 1; j < n; j++) { 
+            if (arr[j] < arr[minIndex]) 
+                minIndex = j; 
+        } 
+        temp = arr[minIndex]; 
+        arr[minIndex] = arr[i]; 
+        arr[i] = temp; 
+    } 
+} 
+  
+void bubbleSort(float arr[], int n) { 
+    int i, j; 
+    float temp; 
+    for (i = 0; i < n - 1; i++) { 
+        for (j = 0; j < n - 1 - i; j++) { 
+            if (arr[j] > arr[j + 1]) { 
+                temp = arr[j]; 
+                arr[j] = arr[j + 1]; 
+                arr[j + 1] = temp; 
+            } 
+        } 
+    } 
+} 
+  
+void displaySorted(float arr[], int n) { 
+    int i; 
+    printf("\nSorted Salaries (Ascending Order):\n"); 
+    for (i = 0; i < n; i++) { 
+        printf("%.2f\n", arr[i]); 
+    } 
+} 
+  
+void displayTopFive(float arr[], int n) { 
+    int i, count = 0; 
+    printf("\nTop five highest salaries:\n"); 
+    for (i = n - 1; i >= 0 && count < 5; i--, count++) { 
+        printf("%.2f\n", arr[i]); 
+    } 
+} 
+  
+int main() { 
+    int n, i, choice; 
+    float salaries[100], sorted[100]; 
+  
+    printf("Enter the number of employees: "); 
+    scanf("%d", &n); 
+  
+    printf("Enter the salaries of %d employees:\n", n); 
+    for (i = 0; i < n; i++) { 
+        scanf("%f", &salaries[i]); 
+        sorted[i] = salaries[i];  // Copy original data 
+    } 
+  
+    printf("\nChoose sorting method:\n"); 
+    printf("1. Selection Sort\n"); 
+    printf("2. Bubble Sort\n"); 
+    printf("Enter your choice: "); 
+    scanf("%d", &choice); 
+  
+    if (choice == 1) { 
+        selectionSort(sorted, n); 
+        printf("\nSalaries sorted using Selection Sort.\n"); 
+    } else if (choice == 2) { 
+        bubbleSort(sorted, n); 
+        printf("\nSalaries sorted using Bubble Sort.\n"); 
+    } else { 
+printf("Invalid choice!\n"); 
+return 1; 
+} 
+displaySorted(sorted, n); 
+displayTopFive(sorted, n); 
+return 0; 
+} 
+Conclusion: 
+In this experiment, we successfully implemented both Selection Sort and Bubble Sort 
+algorithms in C to sort a list of employee salaries. After sorting, we extracted the top five 
+highest salaries by accessing the last five elements of the sorted list. - Selection Sort and Bubble Sort are easy to understand and implement. - Though inefficient for large datasets due to O(n²) time complexity, they are ideal 
+for demonstrating basic sorting principles. - The program correctly identifies and displays the top five highest salaries in both approaches. 
+    
+ 
