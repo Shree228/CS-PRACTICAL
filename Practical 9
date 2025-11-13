@@ -1,0 +1,196 @@
+Lab Manual: Binary Search Tree (BST) — Insertion, Deletion, Display, Search
+Title
+Implement various operations on a Binary Search Tree, such as insertion, deletion, display, and search.
+Objectives
+•	Understand the structure and properties of a Binary Search Tree (BST).
+•	Implement BST operations: insertion, deletion, search, and different traversals (display).
+•	Write a menu-driven C program that accepts user input to perform BST operations.
+•	Analyze time complexity of each BST operation.
+Software / Hardware Requirements
+• Software: GCC or any standard C compiler (e.g., gcc), basic text editor (VS Code, Sublime, Notepad++), terminal/command prompt.
+• Hardware: Any system capable of running a C compiler (Windows / Linux / macOS). Minimum 1 GB RAM is more than sufficient.
+Theory
+A Binary Search Tree (BST) is a binary tree with the following properties:
+1. Each node contains a key (and optionally associated data).
+2. For any node N, all keys in its left subtree are less than N's key.
+3. For any node N, all keys in its right subtree are greater than N's key.
+
+Because of this ordered structure, BST supports efficient search, insertion, and deletion operations.
+Basic Operations and their time complexities
+• Search: Average O(h) where h is the height of the tree. For a balanced BST, h = O(log n), but for a skewed tree h = O(n).
+• Insertion: Same complexity as search — O(h).
+• Deletion: O(h).
+• Traversal / Display: O(n).
+Deletion Cases in BST
+1. Node is a leaf (no children): Simply remove the node.
+2. Node has one child: Replace the node with its child.
+3. Node has two children: Replace the node's key with its in-order successor's key (smallest key in the right subtree), then delete that successor node.
+Traversals (Display)
+• Inorder (Left, Root, Right): Produces sorted order for BST keys.
+• Preorder (Root, Left, Right): Useful for copying tree structure.
+• Postorder (Left, Right, Root): Useful for deleting/freeing nodes.
+Algorithm / Pseudocode (high-level)
+Search(root, key)
+if root == NULL: return NULL
+if key == root->key: return root
+if key < root->key: return Search(root->left, key)
+else: return Search(root->right, key)
+
+Insert(root, key)
+if root == NULL: create new node with key and return it
+if key < root->key: root->left = Insert(root->left, key)
+else if key > root->key: root->right = Insert(root->right, key)
+return root
+
+Delete(root, key)
+if root == NULL: return NULL
+if key < root->key: root->left = Delete(root->left, key)
+else if key > root->key: root->right = Delete(root->right, key)
+else: (handle deletion cases)
+
+C Program (Menu-driven)
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int key;
+    struct Node *left, *right;
+};
+
+struct Node* newNode(int item) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->key = item;
+    temp->left = temp->right = NULL;
+    return temp;
+}
+
+void inorder(struct Node* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->key);
+        inorder(root->right);
+    }
+}
+
+void preorder(struct Node* root) {
+    if (root != NULL) {
+        printf("%d ", root->key);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+void postorder(struct Node* root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%d ", root->key);
+    }
+}
+
+struct Node* search(struct Node* root, int key) {
+    if (root == NULL || root->key == key)
+        return root;
+    if (key < root->key)
+        return search(root->left, key);
+    else
+        return search(root->right, key);
+}
+
+struct Node* insert(struct Node* node, int key) {
+    if (node == NULL) return newNode(key);
+    if (key < node->key)
+        node->left = insert(node->left, key);
+    else if (key > node->key)
+        node->right = insert(node->right, key);
+    return node;
+}
+
+struct Node* minValueNode(struct Node* node) {
+    struct Node* current = node;
+    while (current && current->left != NULL)
+        current = current->left;
+    return current;
+}
+
+struct Node* deleteNode(struct Node* root, int key) {
+    if (root == NULL) return root;
+    if (key < root->key)
+        root->left = deleteNode(root->left, key);
+    else if (key > root->key)
+        root->right = deleteNode(root->right, key);
+    else {
+        if (root->left == NULL) {
+            struct Node* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            struct Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+        struct Node* temp = minValueNode(root->right);
+        root->key = temp->key;
+        root->right = deleteNode(root->right, temp->key);
+    }
+    return root;
+}
+
+int main() {
+    struct Node* root = NULL;
+    int choice, value;
+    while (1) {
+        printf("\n--- Binary Search Tree Operations Menu ---\n");
+        printf("1. Insert\n2. Delete\n3. Search\n4. Display (Inorder)\n");
+        printf("5. Display (Preorder)\n6. Display (Postorder)\n7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                root = insert(root, value);
+                break;
+            case 2:
+                printf("Enter value to delete: ");
+                scanf("%d", &value);
+                root = deleteNode(root, value);
+                break;
+            case 3: {
+                printf("Enter value to search: ");
+                scanf("%d", &value);
+                struct Node* res = search(root, value);
+                if (res != NULL)
+                    printf("Key %d found in the BST.\n", value);
+                else
+                    printf("Key %d not found in the BST.\n", value);
+                break;
+            }
+            case 4:
+                printf("Inorder traversal: ");
+                inorder(root);
+                printf("\n");
+                break;
+            case 5:
+                printf("Preorder traversal: ");
+                preorder(root);
+                printf("\n");
+                break;
+            case 6:
+                printf("Postorder traversal: ");
+                postorder(root);
+                printf("\n");
+                break;
+            case 7:
+                printf("Exiting...\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+    return 0;
+}
+
+Conclusion
+This lab demonstrates core BST operations and their recursive implementations in C. Students learn how tree shape affects performance and why balanced trees are important for optimal complexity.
