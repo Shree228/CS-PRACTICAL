@@ -1,0 +1,171 @@
+Lab Manual: Hash Table Using Chaining with User Input in C
+Practical Title
+Implement a Hash Table of size 10 using division method as hash function and chaining for collision resolution. Perform Insert, Search, and Delete operations using user input.
+Objective
+To implement a hash table using:
+- Division method (`key % 10`) as the hash function
+- Chaining for collision handling (using linked lists)
+- User-driven interface for inserting, searching, deleting and displaying key-value pairs
+Theory
+Hash Table
+A hash table is a data structure that stores key-value pairs and uses a hash function to compute an index into an array of buckets or slots from which the desired value can be found.
+Hash Function (Division Method)
+The division method is one of the simplest hash functions, defined as:
+hash(key) = key % table_size
+In this practical, the table_size = 10, so:
+index = key % 10
+Collision
+A collision occurs when two keys hash to the same index. We resolve this using:
+Chaining
+Chaining handles collisions by maintaining a linked list at each hash index. Multiple entries are chained together at the same location.
+Software & Hardware Requirements
+Software	Version
+GCC Compiler	Any
+OS	Windows/Linux
+Text Editor	Code::Blocks / Dev-C++ / VS Code
+
+Hardware	Specification
+Processor	1 GHz or faster
+RAM	512 MB or more
+Algorithm
+1. Insert(key, value):
+   - Compute index using key % 10
+   - Create a new node and insert at the head of the linked list at that index
+
+2. Search(key):
+   - Compute index using key % 10
+   - Traverse the linked list at that index to find the key
+
+3. Delete(key):
+   - Compute index using key % 10
+   - Traverse the linked list to locate and remove the node with the given key
+
+4. Display:
+   - For each index, display the list of key-value pairs in that chain
+C Program: Hash Table with Chaining (User Input)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TABLE_SIZE 10
+
+struct Node {
+    int key;
+    char value[100];
+    struct Node* next;
+};
+
+struct Node* hashTable[TABLE_SIZE];
+
+int hashFunction(int key) {
+    return key % TABLE_SIZE;
+}
+
+void insert(int key, char* value) {
+    int index = hashFunction(key);
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->key = key;
+    strcpy(newNode->value, value);
+    newNode->next = hashTable[index];
+    hashTable[index] = newNode;
+    printf("Inserted (%d, %s) at index %d\n", key, value, index);
+}
+
+void search(int key) {
+    int index = hashFunction(key);
+    struct Node* temp = hashTable[index];
+    while (temp != NULL) {
+        if (temp->key == key) {
+            printf("Key %d found with value: %s\n", key, temp->value);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Key %d not found\n", key);
+}
+
+void delete(int key) {
+    int index = hashFunction(key);
+    struct Node* temp = hashTable[index];
+    struct Node* prev = NULL;
+
+    while (temp != NULL) {
+        if (temp->key == key) {
+            if (prev == NULL)
+                hashTable[index] = temp->next;
+            else
+                prev->next = temp->next;
+            free(temp);
+            printf("Key %d deleted successfully\n", key);
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    printf("Key %d not found for deletion\n", key);
+}
+
+void display() {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        struct Node* temp = hashTable[i];
+        printf("[%d]: ", i);
+        while (temp != NULL) {
+            printf("(%d, %s) -> ", temp->key, temp->value);
+            temp = temp->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+int main() {
+    int choice, key;
+    char value[100];
+
+    while (1) {
+        printf("\n---- Hash Table Operations ----\n");
+        printf("1. Insert\n");
+        printf("2. Search\n");
+        printf("3. Delete\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter key (integer): ");
+                scanf("%d", &key);
+                printf("Enter value (string): ");
+                scanf("%s", value);
+                insert(key, value);
+                break;
+            case 2:
+                printf("Enter key to search: ");
+                scanf("%d", &key);
+                search(key);
+                break;
+            case 3:
+                printf("Enter key to delete: ");
+                scanf("%d", &key);
+                delete(key);
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+    return 0;
+}
+
+Conclusion
+Hash tables offer fast access using keys.
+The division method provides a simple and efficient hash function.
+Chaining handles collisions effectively using linked lists.
+The implemented program provides flexibility to insert, search, and delete dynamically using user input.
